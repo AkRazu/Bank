@@ -19,14 +19,23 @@ function getTotalField(totalFieldId, depositAmount) {
   totalElement.innerText = preciousTotal + depositAmount;
 }
 
-function updateBalance(amount, isAdd) {
+function getCurrentBalance(){
   const totalBalance = document.getElementById("balance-total");
   const totalBalanceText = totalBalance.innerText;
   const totalBalanceAmount = parseFloat(totalBalanceText);
+  return totalBalanceAmount;
+}
+
+function updateBalance(amount, isAdd) {
+  /* const totalBalance = document.getElementById("balance-total");
+  const totalBalanceText = totalBalance.innerText;
+  const totalBalanceAmount = parseFloat(totalBalanceText); */
+  const totalBalance = document.getElementById("balance-total");
+  const previousBalanceTotal = getCurrentBalance();
   if (isAdd == true) {
-    totalBalance.innerText = amount + totalBalanceAmount;
+    totalBalance.innerText = amount + previousBalanceTotal;
   } else {
-    totalBalance.innerText = totalBalanceAmount - amount;
+    totalBalance.innerText = previousBalanceTotal - amount;
   }
 }
 document
@@ -42,13 +51,16 @@ document
     const depositTotalText = depositTotal.innerText;
     const preciousDepositTotalAmount = parseFloat(depositTotalText);
     depositTotal.innerText = preciousDepositTotalAmount + depositAmount; */
-    getTotalField("deposit-total", depositAmount);
+
     //  update balance
     /* const totalBalance = document.getElementById("balance-total");
     const totalBalanceText = totalBalance.innerText;
     const totalBalanceAmount = parseFloat(totalBalanceText);
     totalBalance.innerText = depositAmount + totalBalanceAmount; */
-    updateBalance(depositAmount, true);
+    if (depositAmount > 0) {
+      getTotalField("deposit-total", depositAmount);
+      updateBalance(depositAmount, true);
+    }
   });
 
 // handle withdraw button
@@ -67,7 +79,6 @@ document
     const previousWithdrawTotal = parseFloat(withdrawTotalText);
 
     withdrawTotal.innerText = previousWithdrawTotal + withdrawAmount; */
-    getTotalField("withdraw-total", withdrawAmount);
 
     // update total balance after withdraw
 
@@ -76,5 +87,12 @@ document
     const totalBalanceAmount = parseFloat(totalBalanceText);
 
     totalBalance.innerText = totalBalanceAmount - withdrawAmount; */
-    updateBalance(withdrawAmount, false);
+    const currentBalance = getCurrentBalance();
+    if (withdrawAmount > 0 && withdrawAmount < currentBalance) {
+      getTotalField("withdraw-total", withdrawAmount);
+      updateBalance(withdrawAmount, false);
+    }
+    if(withdrawAmount > currentBalance){
+      alert('You can not withdraw more than what you have in your account')
+    }
   });
